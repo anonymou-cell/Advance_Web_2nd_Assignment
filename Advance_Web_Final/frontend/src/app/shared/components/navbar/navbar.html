@@ -1,0 +1,32 @@
+<header class="navbar">
+
+  <div class="navbar-left">
+    <button
+      class="menu-toggle"
+      type="button"
+      aria-label="Toggle navigation menu"
+      (click)="toggleSidebar()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <div class="navbar-title">
+      Service Day Dashboard
+    </div>
+  </div>
+
+  <div class="navbar-user">
+
+    <span class="user-info">
+      <span class="user-name">{{ currentUserName }}</span>
+      <span class="user-role">{{ currentUserRole }}</span>
+    </span>
+
+    <button class="logout-btn" (click)="logout()">
+      Logout
+    </button>
+
+  </div>
+
+</header>

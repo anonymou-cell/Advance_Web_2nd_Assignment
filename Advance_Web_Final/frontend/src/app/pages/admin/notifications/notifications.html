@@ -1,0 +1,110 @@
+<h1>Notifications</h1>
+<p class="subtitle">
+  Broadcast messages and schedule reminders for employees.
+</p>
+
+<div class="error-banner" *ngIf="errorMessage">
+  {{ errorMessage }}
+  <button class="retry-btn" (click)="loadNotifications()">Retry</button>
+</div>
+
+<div class="action-error" *ngIf="actionError">{{ actionError }}</div>
+<div class="action-success" *ngIf="actionSuccess">{{ actionSuccess }}</div>
+
+<div class="panels" *ngIf="!errorMessage">
+  <div class="panel">
+    <h2>Send Broadcast</h2>
+
+    <div class="form-group">
+      <label for="broadcastActivity">Target</label>
+      <select id="broadcastActivity" [(ngModel)]="broadcastActivityId">
+        <option value="all">All Employees</option>
+        <option *ngFor="let activity of activities" [value]="activity.id">
+          {{ activity.title }} registrants
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="broadcastMessage">Message</label>
+      <textarea
+        id="broadcastMessage"
+        rows="4"
+        [(ngModel)]="broadcastMessage"
+        placeholder="Type your announcement..."
+      ></textarea>
+    </div>
+
+    <button
+      class="send-btn"
+      [disabled]="!broadcastMessage.trim() || isSending"
+      (click)="sendBroadcast()"
+    >
+      {{ isSending ? 'Sending...' : 'Send Broadcast' }}
+    </button>
+  </div>
+
+  <div class="panel">
+    <h2>Schedule Reminder</h2>
+
+    <div class="form-group">
+      <label for="reminderActivity">Activity</label>
+      <select id="reminderActivity" [(ngModel)]="reminderActivityId">
+        <option value="" disabled>Select an activity</option>
+        <option *ngFor="let activity of activities" [value]="activity.id">
+          {{ activity.title }}
+        </option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="reminderInterval">Send reminder</label>
+      <select id="reminderInterval" [(ngModel)]="reminderInterval">
+        <option value="1_week">1 week before</option>
+        <option value="3_days">3 days before</option>
+        <option value="1_day">1 day before</option>
+      </select>
+    </div>
+
+    <button
+      class="schedule-btn"
+      [disabled]="!reminderActivityId || isScheduling"
+      (click)="scheduleReminder()"
+    >
+      {{ isScheduling ? 'Scheduling...' : 'Schedule Reminder' }}
+    </button>
+  </div>
+</div>
+
+<h2 class="history-title" *ngIf="!errorMessage">Notification History</h2>
+
+<div class="skeleton-table" *ngIf="isLoading"></div>
+
+<p class="empty-state" *ngIf="!isLoading && !errorMessage && !notifications.length">
+  No notifications sent yet.
+</p>
+
+<div class="table-wrap" *ngIf="!isLoading && !errorMessage && notifications.length">
+  <table>
+    <thead>
+      <tr>
+        <th>Message</th>
+        <th>Target</th>
+        <th>Type</th>
+        <th>Sent</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let notification of notifications">
+        <td data-label="Message">{{ notification.message }}</td>
+        <td data-label="Target">{{ notification.activityTitle || 'All Employees' }}</td>
+        <td data-label="Type">
+          <span class="type-badge" [class]="notification.type">
+            {{ notification.type }}
+          </span>
+        </td>
+        <td data-label="Sent">{{ notification.sentAt | date: 'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,109 @@
+* , *::before, *::after {
+  box-sizing: border-box;
+}
+
+h1 {
+  color: #1d3557;
+  margin-bottom: .5rem;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.error-banner {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.loading-state {
+  color: #999;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.activity-form {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, .08);
+  max-width: 600px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.activity-form label {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+  color: #1d3557;
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+.activity-form input,
+.activity-form textarea {
+  border: 1px solid #d0d5dd;
+  border-radius: 6px;
+  padding: .6rem .8rem;
+  font-size: .95rem;
+  font-weight: 400;
+  color: #333;
+  font-family: inherit;
+}
+
+.activity-form input:focus,
+.activity-form textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+.field-error {
+  color: #b91c1c;
+  font-size: .8rem;
+  font-weight: 400;
+}
+
+.form-actions {
+  display: flex;
+  gap: .8rem;
+  margin-top: .5rem;
+}
+
+button {
+  border: none;
+  border-radius: 6px;
+  padding: .7rem 1.2rem;
+  cursor: pointer;
+  font-size: .95rem;
+  flex: 1;
+}
+
+button:disabled {
+  background: #cbd5e1 !important;
+  color: #64748b !important;
+  cursor: not-allowed;
+}
+
+.save-btn {
+  background: #059669;
+  color: white;
+}
+
+.save-btn:hover:not(:disabled) {
+  background: #047857;
+}
+
+.cancel-btn {
+  background: #f1f3f6;
+  color: #333;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #e2e5e9;
+}

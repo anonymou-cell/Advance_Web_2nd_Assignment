@@ -1,0 +1,72 @@
+<h1>Administrator Dashboard</h1>
+
+<p class="subtitle">
+  Manage Service Day activities and monitor employee participation.
+</p>
+
+<div class="stats">
+
+  <div class="card">
+    <h3>Total Activities</h3>
+    <h2>{{ totalActivities }}</h2>
+  </div>
+
+  <div class="card">
+    <h3>Total Employees</h3>
+    <h2>{{ totalEmployees }}</h2>
+  </div>
+
+  <div class="card">
+    <h3>Total Registrations</h3>
+    <h2>{{ totalRegistrations }}</h2>
+  </div>
+
+</div>
+
+<section class="dashboard-section">
+
+  <div class="panel">
+
+    <h2>Recent Activity Management</h2>
+
+    <ul>
+
+      <li *ngFor="let activity of recentActivityLogs">
+
+        <span class="item-name">
+          {{ activity.title }}
+        </span>
+
+        <span class="item-date">
+          {{ activity.time }}
+        </span>
+
+      </li>
+
+    </ul>
+
+  </div>
+
+  <div class="panel">
+
+    <h2>Participation Summary</h2>
+
+    <ul>
+
+      <li *ngFor="let item of participationSummary">
+
+        <span class="item-name">
+          {{ item.activity }}
+        </span>
+
+        <span class="item-date">
+          {{ item.participants }} Participants
+        </span>
+
+      </li>
+
+    </ul>
+
+  </div>
+
+</section>

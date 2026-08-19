@@ -1,0 +1,127 @@
+<h1>Manage Activities</h1>
+
+<p class="subtitle">
+  Add, update, or remove Service Day activities.
+</p>
+
+<div class="error-banner" *ngIf="errorMessage">
+  {{ errorMessage }}
+  <button
+    class="retry-btn"
+    (click)="loadActivities()">
+    Retry
+  </button>
+</div>
+
+<div
+  class="action-error"
+  *ngIf="actionError">
+  {{ actionError }}
+</div>
+
+<div
+  class="page-actions"
+  *ngIf="!errorMessage">
+
+  <button
+    class="add-btn"
+    routerLink="/admin/activities/new">
+
+    + Add Activity
+
+  </button>
+
+</div>
+
+<div
+  class="activity-grid"
+  *ngIf="isLoading">
+
+  <div
+    class="activity-card skeleton-card"
+    *ngFor="let i of [1,2,3]">
+  </div>
+
+</div>
+
+<p
+  class="empty-state"
+  *ngIf="!isLoading && !errorMessage && activities.length === 0">
+
+  No activities created yet.
+
+</p>
+
+<div
+  class="activity-grid"
+  *ngIf="!isLoading && !errorMessage && activities.length > 0">
+
+  <div
+    class="activity-card"
+    *ngFor="let activity of activities">
+
+    <span
+      class="badge full-badge"
+      *ngIf="isFull(activity)">
+      Full
+    </span>
+
+    <span
+      class="badge closed-badge"
+      *ngIf="isClosed(activity) && !isFull(activity)">
+      Closed
+    </span>
+
+    <h2>{{ activity.title }}</h2>
+
+    <p>
+      <strong>Type:</strong>
+      {{ activity.serviceType }}
+    </p>
+
+    <p>
+      <strong>Location:</strong>
+      {{ activity.location }}
+    </p>
+
+    <p>
+      <strong>Date:</strong>
+      {{ activity.date }} {{ activity.time }}
+    </p>
+
+    <p>
+      <strong>Seats:</strong>
+      {{ availableSeats(activity) }} / {{ activity.maxSeats }}
+    </p>
+
+    <p>
+      <strong>Cut-off:</strong>
+      {{ activity.cutOffDateTime | date:'short' }}
+    </p>
+
+    <div class="card-actions">
+
+     <button
+  class="edit-btn"
+  [routerLink]="['/admin/activities', activity.id, 'edit']">
+  Edit
+</button>
+
+      <button
+        class="delete-btn"
+        [disabled]="deletingId === activity.id"
+        (click)="deleteActivity(activity)">
+
+        {{
+          deletingId === activity.id
+            ? 'Deleting...'
+            : 'Delete'
+        }}
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,70 @@
+<h1>My Registrations</h1>
+
+<p class="subtitle">
+  View and manage your registered Service Day activities.
+</p>
+
+<p class="empty-state" *ngIf="!isLoading && registrations.length === 0">
+  You haven't registered for any activities yet.
+</p>
+
+<p class="empty-state" *ngIf="isLoading">
+  Loading registrations...
+</p>
+
+<p class="empty-state" *ngIf="errorMessage">
+  {{ errorMessage }}
+</p>
+
+<div class="table-wrap" *ngIf="!isLoading && registrations.length > 0">
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>Activity ID</th>
+        <th>Employee</th>
+        <th>Registered At</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let registration of registrations">
+
+        <td>{{ registration.activityId }}</td>
+
+        <td>{{ registration.employeeName }}</td>
+
+        <td>{{ registration.registeredAt | date:'medium' }}</td>
+
+        <td>
+          <span
+            class="status"
+            [class]="statusClass(registration.status)">
+            {{ registration.status }}
+          </span>
+        </td>
+
+        <td>
+
+          <button
+            class="cancel-btn"
+            (click)="cancel(registration)"
+            [disabled]="registration.status === 'cancelled'">
+
+            {{ registration.status === 'cancelled' ? 'Cancelled' : 'Cancel' }}
+
+          </button>
+
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>

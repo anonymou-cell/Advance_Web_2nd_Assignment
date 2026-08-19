@@ -1,0 +1,73 @@
+<h1>Available Activities</h1>
+
+<p class="subtitle">
+  Register for upcoming community service activities.
+</p>
+
+<div class="activity-grid">
+
+  <!-- Loading cards -->
+  <div *ngIf="isLoading">
+
+    <div class="activity-card skeleton-card"
+         *ngFor="let i of [1,2,3]">
+    </div>
+
+  </div>
+
+  <!-- Real activities -->
+  <ng-container *ngIf="!isLoading">
+
+    <div
+      class="activity-card"
+      *ngFor="let activity of activities"
+      [class.full]="availableSeats(activity) <= 0">
+
+      <span
+        class="badge registered-badge"
+        *ngIf="isRegistered(activity)">
+        Registered
+      </span>
+
+      <span
+        class="badge full-badge"
+        *ngIf="availableSeats(activity) <= 0">
+        Full
+      </span>
+
+      <h2>{{ activity.title }}</h2>
+
+      <p>
+        <strong>Location:</strong>
+        {{ activity.location }}
+      </p>
+
+      <p>
+        <strong>Date:</strong>
+        {{ activity.date }}
+      </p>
+
+      <p>
+        <strong>Available Seats:</strong>
+        {{ availableSeats(activity) }} / {{ activity.maxSeats }}
+      </p>
+
+      <button
+        [disabled]="availableSeats(activity) <= 0 || isRegistered(activity)"
+        (click)="register(activity)">
+
+        {{ isRegistered(activity) ? 'Registered' : 'Register' }}
+
+      </button>
+
+    </div>
+
+  </ng-container>
+
+</div>
+
+<p class="empty-state" *ngIf="!isLoading && activities.length === 0">
+
+  No activities available right now.
+
+</p>

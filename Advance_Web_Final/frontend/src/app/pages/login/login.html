@@ -1,0 +1,193 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>Service Day</h1>
+    <p class="subtitle">Community Service Management System</p>
+
+    <div class="mode-toggle">
+      <button
+        type="button"
+        class="mode-tab"
+        [class.active]="mode === 'signup'"
+        (click)="switchMode('signup')">
+        Create Account
+      </button>
+
+      <button
+        type="button"
+        class="mode-tab"
+        [class.active]="mode === 'login'"
+        (click)="switchMode('login')">
+        Login
+      </button>
+    </div>
+
+    <div class="error-banner" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <!-- ================= SIGNUP ================= -->
+
+    <form
+      *ngIf="mode === 'signup'"
+      [formGroup]="signupForm"
+      (ngSubmit)="signup()">
+
+      <div class="form-group">
+        <label>Full Name</label>
+        <input
+          type="text"
+          formControlName="fullName"
+          placeholder="Enter your full name">
+
+        <span
+          class="field-error"
+          *ngIf="signupForm.get('fullName')?.invalid && signupForm.get('fullName')?.touched">
+          Full name is required
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Enter your email">
+
+        <span
+          class="field-error"
+          *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+          Valid email is required
+        </span>
+      </div>
+
+      <!-- ROLE -->
+
+      <div class="form-group">
+        <label>Select Role</label>
+
+        <div class="role-toggle">
+
+          <button
+            type="button"
+            class="role-tab"
+            [class.active]="signupForm.get('role')?.value === 'employee'"
+            (click)="signupForm.patchValue({ role: 'employee' })">
+            Employee
+          </button>
+
+          <button
+            type="button"
+            class="role-tab"
+            [class.active]="signupForm.get('role')?.value === 'admin'"
+            (click)="signupForm.patchValue({ role: 'admin' })">
+            Administrator
+          </button>
+
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Create a password">
+
+        <small class="password-hint">
+          Password must contain at least 8 characters, one uppercase letter, one lowercase letter and one number.
+        </small>
+
+        <span
+          class="field-error"
+          *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+          Password does not meet the requirements.
+        </span>
+      </div>
+
+      <button
+        type="submit"
+        class="submit-btn employee-btn"
+        [disabled]="signupForm.invalid || isLoading">
+
+        {{ isLoading ? 'Creating account...' : 'Create Account' }}
+
+      </button>
+
+    </form>
+
+    <!-- ================= LOGIN ================= -->
+
+    <form
+      *ngIf="mode === 'login'"
+      [formGroup]="loginForm"
+      (ngSubmit)="login()">
+
+      <div class="form-group">
+        <label>Email</label>
+
+        <input
+          type="email"
+          formControlName="email"
+          placeholder="Enter your email">
+
+        <span
+          class="field-error"
+          *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          Valid email is required
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label>Select Role</label>
+
+        <div class="role-toggle">
+
+          <button
+            type="button"
+            class="role-tab"
+            [class.active]="loginForm.get('role')?.value === 'employee'"
+            (click)="loginForm.patchValue({ role: 'employee' })">
+            Employee
+          </button>
+
+          <button
+            type="button"
+            class="role-tab"
+            [class.active]="loginForm.get('role')?.value === 'admin'"
+            (click)="loginForm.patchValue({ role: 'admin' })">
+            Administrator
+          </button>
+
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+
+        <input
+          type="password"
+          formControlName="password"
+          placeholder="Enter your password">
+
+        <span
+          class="field-error"
+          *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Password is required
+        </span>
+      </div>
+
+      <button
+        type="submit"
+        class="submit-btn employee-btn"
+        [disabled]="loginForm.invalid || isLoading">
+
+        {{ isLoading ? 'Signing in...' : 'Login' }}
+
+      </button>
+
+    </form>
+
+  </div>
+</div>

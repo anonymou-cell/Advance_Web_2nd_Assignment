@@ -1,0 +1,59 @@
+<div class="sidebar" [class.open]="isOpen()">
+
+  <h2>Service Day</h2>
+
+  <nav>
+
+    <ng-container *ngIf="isEmployee">
+      <a routerLink="/employee/dashboard" routerLinkActive="active" (click)="onNavigate()">
+        Employee Dashboard
+      </a>
+
+      <a routerLink="/employee/activities" routerLinkActive="active" (click)="onNavigate()">
+        Activities
+      </a>
+
+      <a routerLink="/employee/registrations" routerLinkActive="active" (click)="onNavigate()">
+        My Registrations
+      </a>
+
+      <a routerLink="/employee/checkin" routerLinkActive="active" (click)="onNavigate()">
+        Check In
+      </a>
+    </ng-container>
+
+    <ng-container *ngIf="isAdmin">
+      <a routerLink="/admin/dashboard" routerLinkActive="active" (click)="onNavigate()">
+        Admin Dashboard
+      </a>
+
+      <a routerLink="/admin/activities" routerLinkActive="active" (click)="onNavigate()">
+        Manage Activities
+      </a>
+
+      <a routerLink="/admin/participation" routerLinkActive="active" (click)="onNavigate()">
+        Participation
+      </a>
+
+      <a routerLink="/admin/checkin-management" routerLinkActive="active" (click)="onNavigate()">
+        Check-In Management
+      </a>
+
+      <a routerLink="/admin/notifications" routerLinkActive="active" (click)="onNavigate()">
+        Notifications
+      </a>
+    </ng-container>
+
+  </nav>
+
+  <button class="logout-link" (click)="logout()">
+    Logout
+  </button>
+
+</div>
+
+<div
+  class="sidebar-backdrop"
+  *ngIf="isOpen()"
+  (click)="onBackdropClick()">
+</div>

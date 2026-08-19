@@ -1,0 +1,90 @@
+<h1>Activity Check-In</h1>
+
+<p class="subtitle">
+  Scan the QR code shown by your activity organizer, or enter the check-in code manually.
+</p>
+
+<div class="result-banner error" *ngIf="resultError">
+  {{ resultError }}
+</div>
+
+<div class="result-banner success" *ngIf="resultSuccess">
+  {{ resultSuccess }}
+</div>
+
+<div class="mode-toggle">
+  <button
+    class="toggle-btn"
+    [class.active]="mode === 'scan'"
+    (click)="setMode('scan')">
+    Scan QR Code
+  </button>
+
+  <button
+    class="toggle-btn"
+    [class.active]="mode === 'manual'"
+    (click)="setMode('manual')">
+    Enter Code Manually
+  </button>
+</div>
+
+<div class="panel" *ngIf="mode === 'scan'">
+
+  <div class="error-banner" *ngIf="cameraError">
+    {{ cameraError }}
+  </div>
+
+  <div class="scanner-frame" *ngIf="!cameraError">
+    <video #video playsinline muted></video>
+    <div class="scan-guide"></div>
+  </div>
+
+  <canvas #canvas class="hidden-canvas"></canvas>
+
+  <p class="scan-hint" *ngIf="!cameraError">
+    Point your camera at the QR code. Check-in happens automatically once it's recognized.
+  </p>
+
+  <button class="restart-btn" *ngIf="!isScanning && !cameraError" (click)="startScanning()">
+    Restart camera
+  </button>
+</div>
+
+<div class="panel" *ngIf="mode === 'manual'">
+  <label for="manualCode">Check-in code</label>
+
+  <div class="manual-row">
+    <input
+      id="manualCode"
+      type="text"
+      maxlength="6"
+      placeholder="e.g. AB12CD"
+      [(ngModel)]="manualCode"
+      (keyup.enter)="submitManualCode()"
+      [disabled]="isSubmitting" />
+
+    <button
+      class="submit-btn"
+      [disabled]="isSubmitting || !manualCode.trim()"
+      (click)="submitManualCode()">
+      {{ isSubmitting ? 'Checking in...' : 'Check In' }}
+    </button>
+  </div>
+
+  <p class="scan-hint">
+    Ask your activity organizer for the check-in code if you don't have it.
+  </p>
+</div>
+
+<div class="status-section" *ngIf="!isLoadingStatus && myRegistrations.length > 0">
+  <h2>Your registered activities</h2>
+
+  <ul class="status-list">
+    <li *ngFor="let reg of myRegistrations">
+      <span class="activity-name">{{ activityTitle(reg.activityId) }}</span>
+      <span class="status-pill" [class.checked-in]="isCheckedIn(reg.activityId)">
+        {{ isCheckedIn(reg.activityId) ? 'Checked in' : 'Not checked in yet' }}
+      </span>
+    </li>
+  </ul>
+</div>

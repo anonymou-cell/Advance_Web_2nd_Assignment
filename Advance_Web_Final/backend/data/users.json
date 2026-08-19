@@ -1,0 +1,82 @@
+[
+  {
+    "id": "bc14ed82-2b89-4fcc-a764-a51ad1f0733a",
+    "fullName": "su m n dnjwd",
+    "email": "suman.kumar.kathiit.2024@midvalley.edu.np",
+    "password": "$2b$10$zIVk2nhL2mnBjcIZHSsZ8eGKGQdFr3yoiuny4DcIT079v0CooV76y",
+    "role": "employee",
+    "createdAt": "2026-07-09T01:34:15.863Z"
+  },
+  {
+    "id": "d86ec69f-62f1-4aba-9561-751121d7071c",
+    "fullName": "Suman",
+    "email": "123@gmail.com",
+    "password": "$2b$10$P.6dzlWAylAAQlizVRJyn.ZApM.0xknO4siO.qCs4Nqdjx3AdvCxa",
+    "role": "employee",
+    "createdAt": "2026-07-09T01:41:28.755Z"
+  },
+  {
+    "id": "e7c3eba8-11b0-4d16-9a9a-840163934f9a",
+    "fullName": "Suman",
+    "email": "123132312suman@gmail.com",
+    "password": "$2b$10$KSr0WJaDNPqs5K36GIKwYunVt94LeNla.XQhO9xPIn8Drx7aQUfuu",
+    "role": "employee",
+    "createdAt": "2026-07-09T01:44:02.585Z"
+  },
+  {
+    "id": "9ee32119-ea6e-4321-97f5-d23e3da51b9b",
+    "fullName": "Suman 123",
+    "email": "suman123@gmail.com",
+    "password": "$2b$10$3ux9E1fS9QyjMhcfJBM9fuFZCsREmxKLFcGSNYQLenj4Z5zPNsPXe",
+    "role": "employee",
+    "createdAt": "2026-07-09T01:46:13.722Z"
+  },
+  {
+    "id": "96376938-b019-491b-b035-743d1f9d9b46",
+    "fullName": "Sahil",
+    "email": "sahil123@gmail.com",
+    "password": "$2b$10$/fjbmgBg9QxXilA7FI6tb.PhKL9uJ3CAB2jGJJ4K7mUSZlJvh5D1S",
+    "role": "employee",
+    "createdAt": "2026-07-09T01:54:33.020Z"
+  },
+  {
+    "id": "40050594-7567-44d7-a3de-43b47f9f3208",
+    "fullName": "Sahil",
+    "email": "sahil@gmail.com",
+    "password": "$2b$10$MqQ2TaAuE3RoHA3coXDkdOWisaMQ2pD.l9xZvvvIfsA/y8I5JXPde",
+    "role": "employee",
+    "createdAt": "2026-07-09T02:14:30.390Z"
+  },
+  {
+    "id": "0e9321ae-0523-402b-acfb-8afdc1e1407b",
+    "fullName": "sujan",
+    "email": "sujan@gmail.com",
+    "password": "12345678",
+    "role": "employee",
+    "createdAt": "2026-07-09T02:27:46.454Z"
+  },
+  {
+    "id": "60324f0a-f7e7-4f26-90d4-85868d48815b",
+    "fullName": "roshu",
+    "email": "roshu@gmail.com",
+    "password": "c",
+    "role": "admin",
+    "createdAt": "2026-07-09T03:07:46.935Z"
+  },
+  {
+    "id": "549e634b-532f-42d5-bccc-de0343b50d00",
+    "fullName": "Testing_new",
+    "email": "testingmail@gmail.com",
+    "password": "$2b$10$5KWHzoJsZv6J3EF6r5U4sO.95ZMVvbi99MDNZJ8ZaOxSHTOh.4Ahi",
+    "role": "employee",
+    "createdAt": "2026-08-19T16:05:47.036Z"
+  },
+  {
+    "id": "1899a5ee-2940-4f16-8a7d-ffc558959bff",
+    "fullName": "sabin",
+    "email": "sabin@gmail.com",
+    "password": "$2b$10$PDdjMGIApep/aT..DaXQousWyG9rKCgFmHUjGT1bbQFFTeH8mxAGi",
+    "role": "admin",
+    "createdAt": "2026-08-19T16:25:27.837Z"
+  }
+]

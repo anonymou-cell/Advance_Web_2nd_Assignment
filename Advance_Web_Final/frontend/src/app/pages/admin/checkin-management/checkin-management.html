@@ -1,0 +1,134 @@
+<h1>Check-In Management</h1>
+
+<p class="subtitle">
+  Select an activity to display its check-in QR code and watch attendees check in live.
+</p>
+
+<div class="error-banner" *ngIf="errorMessage">
+  {{ errorMessage }}
+  <button class="retry-btn" (click)="loadActivities()">
+    Retry
+  </button>
+</div>
+
+<div class="action-error" *ngIf="actionError">
+  {{ actionError }}
+</div>
+
+<div class="action-success" *ngIf="actionSuccess">
+  {{ actionSuccess }}
+</div>
+
+<div class="activity-picker" *ngIf="!errorMessage">
+  <label for="activitySelect">Activity</label>
+
+  <select
+    id="activitySelect"
+    [(ngModel)]="selectedActivityId"
+    (ngModelChange)="onActivityChange()"
+    [disabled]="isLoadingActivities">
+    <option value="" disabled>
+      {{ isLoadingActivities ? 'Loading activities...' : 'Select an activity' }}
+    </option>
+    <option *ngFor="let activity of activities" [value]="activity.id">
+      {{ activity.title }} &mdash; {{ activity.date }}
+    </option>
+  </select>
+</div>
+
+<p class="empty-state" *ngIf="!errorMessage && !isLoadingActivities && !selectedActivityId">
+  Choose an activity above to generate its check-in QR code.
+</p>
+
+<div class="checkin-layout" *ngIf="selectedActivity">
+
+  <div class="qr-card">
+    <h3>{{ selectedActivity.title }}</h3>
+    <p class="qr-hint">Attendees scan this code, or enter it manually, to check in.</p>
+
+    <div class="qr-box">
+      <img *ngIf="qrDataUrl" [src]="qrDataUrl" alt="Check-in QR code" />
+      <div class="qr-placeholder" *ngIf="!qrDataUrl && !qrError">Generating QR code...</div>
+      <div class="qr-placeholder qr-error" *ngIf="qrError">
+        Couldn't generate the QR code.
+        <button class="retry-btn" (click)="generateQrCode()">Retry</button>
+      </div>
+    </div>
+
+    <div class="code-row">
+      <span class="code">{{ selectedActivity.checkInCode }}</span>
+      <button class="copy-btn" (click)="copyCode()">Copy code</button>
+    </div>
+
+    <div class="qr-stats">
+      <div>
+        <strong>{{ checkedInCount }}</strong>
+        <span>Checked in</span>
+      </div>
+      <div>
+        <strong>{{ totalRegistered }}</strong>
+        <span>Registered</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="live-panel">
+    <div class="live-header">
+      <h3>Live check-ins</h3>
+      <span class="live-dot"></span>
+    </div>
+
+    <div class="skeleton-table" *ngIf="isLoadingDetail"></div>
+
+    <p class="empty-state" *ngIf="!isLoadingDetail && participantRows.length === 0">
+      No one is registered for this activity yet.
+    </p>
+
+    <div class="table-wrap" *ngIf="!isLoadingDetail && participantRows.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Status</th>
+            <th>Checked in at</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of participantRows">
+            <td data-label="Employee">{{ row.registration.employeeName }}</td>
+
+            <td data-label="Status">
+              <span class="status" [class.checked-in]="row.checkin" [class.pending]="!row.checkin">
+                {{ row.checkin ? 'Checked in' : 'Not yet' }}
+              </span>
+            </td>
+
+            <td data-label="Checked in at">
+              {{ row.checkin ? (row.checkin.checkedInAt | date:'short') : '—' }}
+            </td>
+
+            <td data-label="Actions" class="row-actions">
+              <button
+                class="checkin-btn"
+                *ngIf="!row.checkin"
+                [disabled]="manualCheckinUsername === row.registration.username"
+                (click)="manualCheckIn(row)">
+                {{ manualCheckinUsername === row.registration.username ? 'Checking in...' : 'Check in' }}
+              </button>
+
+              <button
+                class="remove-btn"
+                *ngIf="row.checkin"
+                [disabled]="removingId === row.checkin.id"
+                (click)="undoCheckin(row.checkin)">
+                {{ removingId === row.checkin.id ? 'Removing...' : 'Undo' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,165 @@
+* , *::before, *::after {
+  box-sizing: border-box;
+}
+
+h1 {
+  color: #1d3557;
+}
+
+.subtitle {
+  margin-bottom: 2rem;
+  color: #666;
+}
+
+.error-banner {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.retry-btn {
+  background: #b91c1c;
+  color: white;
+  border: none;
+  padding: .4rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .85rem;
+}
+
+.action-error {
+  background: #fff7ed;
+  color: #9a3412;
+  padding: .8rem 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: .9rem;
+}
+
+.empty-state {
+  color: #999;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.table-wrap {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, .08);
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: #1d3557;
+  color: white;
+  padding: 1rem;
+  text-align: left;
+}
+
+td {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+tr:hover {
+  background: #f8f9fa;
+}
+
+.status {
+  padding: .35rem .8rem;
+  border-radius: 20px;
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+.status.registered,
+.status.confirmed {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status.pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status.cancelled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.cancel-btn {
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  padding: .5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .85rem;
+}
+
+.cancel-btn:hover:not(:disabled) {
+  background: #fecaca;
+}
+
+.cancel-btn:disabled {
+  background: #f1f3f6;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.skeleton-table {
+  height: 200px;
+  border-radius: 12px;
+  background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+@media (max-width: 700px) {
+  thead {
+    display: none;
+  }
+
+  table, tbody, tr, td {
+    display: block;
+    width: 100%;
+  }
+
+  tr {
+    margin-bottom: 1rem;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    padding: .5rem;
+  }
+
+  td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: none;
+    padding: .6rem .8rem;
+  }
+
+  td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #888;
+    font-size: .8rem;
+  }
+}

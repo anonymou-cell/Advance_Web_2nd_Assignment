@@ -1,0 +1,166 @@
+* , *::before, *::after {
+  box-sizing: border-box;
+}
+
+h1 {
+  color: #1d3557;
+  margin-bottom: .5rem;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.error-banner {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.retry-btn {
+  background: #b91c1c;
+  color: white;
+  border: none;
+  padding: .4rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: .85rem;
+}
+
+.action-error {
+  background: #fff7ed;
+  color: #9a3412;
+  padding: .8rem 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: .9rem;
+}
+
+.empty-state {
+  color: #999;
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 420px) {
+  .activity-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.activity-card {
+  position: relative;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, .08);
+}
+
+.activity-card h2 {
+  margin-top: 0;
+  color: #1d3557;
+  padding-right: 4.5rem;
+}
+
+.activity-card p {
+  margin: .6rem 0;
+  color: #555;
+}
+
+.badge {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: .75rem;
+  font-weight: 600;
+  padding: .3rem .7rem;
+  border-radius: 999px;
+}
+
+.full-badge {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.closed-badge {
+  background: #f1f3f6;
+  color: #666;
+}
+
+.card-actions {
+  display: flex;
+  gap: .8rem;
+  margin-top: 1.5rem;
+}
+
+button {
+  border: none;
+  border-radius: 6px;
+  padding: .7rem 1.2rem;
+  cursor: pointer;
+  font-size: .95rem;
+  flex: 1;
+}
+
+button:disabled {
+  background: #cbd5e1 !important;
+  color: #64748b !important;
+  cursor: not-allowed;
+}
+
+.edit-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.edit-btn:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: white;
+}
+
+.delete-btn:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.page-actions {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.add-btn {
+  background: #059669;
+  color: white;
+}
+
+.add-btn:hover:not(:disabled) {
+  background: #047857;
+}
+
+.skeleton-card {
+  height: 200px;
+  background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

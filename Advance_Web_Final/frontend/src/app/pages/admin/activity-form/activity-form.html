@@ -1,0 +1,104 @@
+<h1>{{ isEditMode ? 'Edit Activity' : 'Add Activity' }}</h1>
+
+<p class="subtitle">
+  {{ isEditMode
+    ? 'Update the details of this Service Day activity.'
+    : 'Create a new Service Day activity.' }}
+</p>
+
+<div class="error-banner" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+<p class="loading-state" *ngIf="isLoading">
+  Loading activity...
+</p>
+
+<form
+  class="activity-form"
+  [formGroup]="form"
+  (ngSubmit)="save()"
+  *ngIf="!isLoading">
+
+  <label>
+    Title
+    <input type="text" formControlName="title" />
+    <span
+      class="field-error"
+      *ngIf="form.get('title')?.invalid && form.get('title')?.touched">
+      Title is required.
+    </span>
+  </label>
+
+  <label>
+    Service Type
+    <input type="text" formControlName="serviceType" />
+  </label>
+
+  <label>
+    Location
+    <input type="text" formControlName="location" />
+    <span
+      class="field-error"
+      *ngIf="form.get('location')?.invalid && form.get('location')?.touched">
+      Location is required.
+    </span>
+  </label>
+
+  <label>
+    Description
+    <textarea formControlName="description" rows="3"></textarea>
+  </label>
+
+  <label>
+    Date
+    <input type="date" formControlName="date" />
+    <span
+      class="field-error"
+      *ngIf="form.get('date')?.invalid && form.get('date')?.touched">
+      Date is required.
+    </span>
+  </label>
+
+  <label>
+    Time
+    <input type="time" formControlName="time" />
+  </label>
+
+  <label>
+    Max Seats
+    <input type="number" formControlName="maxSeats" min="1" />
+    <span
+      class="field-error"
+      *ngIf="form.get('maxSeats')?.invalid && form.get('maxSeats')?.touched">
+      A valid number of seats is required.
+    </span>
+  </label>
+
+  <label>
+    Cut-off Date &amp; Time
+    <input type="datetime-local" formControlName="cutOffDateTime" />
+    <span
+      class="field-error"
+      *ngIf="form.get('cutOffDateTime')?.invalid && form.get('cutOffDateTime')?.touched">
+      Cut-off date/time is required.
+    </span>
+  </label>
+
+  <div class="form-actions">
+    <button
+      type="button"
+      class="cancel-btn"
+      routerLink="/admin/activities">
+      Cancel
+    </button>
+
+    <button
+      type="submit"
+      class="save-btn"
+      [disabled]="isSaving">
+      {{ isSaving ? 'Saving...' : (isEditMode ? 'Save Changes' : 'Create Activity') }}
+    </button>
+  </div>
+
+</form>

@@ -1,0 +1,158 @@
+<h1>Participation Monitor</h1>
+
+<p class="subtitle">
+  Track employee registrations and slot utilisation across activities.
+</p>
+
+<div class="error-banner" *ngIf="errorMessage">
+  {{ errorMessage }}
+  <button class="retry-btn" (click)="loadParticipants()">
+    Retry
+  </button>
+</div>
+
+<div class="action-error" *ngIf="actionError">
+  {{ actionError }}
+</div>
+
+<div class="action-success" *ngIf="actionSuccess">
+  {{ actionSuccess }}
+</div>
+
+<div
+  class="summary-grid"
+  *ngIf="!isLoading && !errorMessage"
+>
+
+  <div class="summary-card">
+    <h3>Total Registrations</h3>
+    <h2>{{ totalSlotsTaken }}</h2>
+  </div>
+
+  <div
+    class="summary-card"
+    *ngFor="let dist of distributionByActivity"
+  >
+    <h3>{{ dist.activity }}</h3>
+    <h2>{{ dist.count }}</h2>
+  </div>
+
+</div>
+
+<div
+  class="filter-bar"
+  *ngIf="!isLoading && !errorMessage"
+>
+
+  <label for="activityFilter">
+    Filter by activity:
+  </label>
+
+  <select
+    id="activityFilter"
+    [(ngModel)]="activityFilter"
+  >
+    <option value="all">
+      All Activities
+    </option>
+
+    <option
+      *ngFor="let activity of activityOptions"
+      [value]="activity"
+    >
+      {{ activity }}
+    </option>
+
+  </select>
+
+</div>
+
+<div
+  class="skeleton-table"
+  *ngIf="isLoading">
+</div>
+
+<p
+  class="empty-state"
+  *ngIf="!isLoading && !errorMessage && filteredParticipants.length === 0"
+>
+  No participants found.
+</p>
+
+<div
+  class="table-wrap"
+  *ngIf="!isLoading && !errorMessage && filteredParticipants.length > 0"
+>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>Employee</th>
+        <th>Activity</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      <tr *ngFor="let participant of filteredParticipants">
+
+        <td data-label="Employee">
+          {{ participant.employee }}
+        </td>
+
+        <td data-label="Activity">
+          {{ participant.activity }}
+        </td>
+
+        <td data-label="Status">
+
+          <span
+            class="status"
+            [class]="statusClass(participant.status)"
+          >
+            {{ participant.status }}
+          </span>
+
+        </td>
+
+        <td
+          data-label="Actions"
+          class="row-actions"
+        >
+
+          <button
+            class="reminder-btn"
+            [disabled]="remindingId === participant.id"
+            (click)="sendReminder(participant)"
+          >
+            {{
+              remindingId === participant.id
+                ? 'Sending...'
+                : 'Remind'
+            }}
+          </button>
+
+          <button
+            class="remove-btn"
+            [disabled]="removingId === participant.id"
+            (click)="removeParticipant(participant)"
+          >
+            {{
+              removingId === participant.id
+                ? 'Removing...'
+                : 'Remove'
+            }}
+          </button>
+
+        </td>
+
+      </tr>
+
+    </tbody>
+
+  </table>
+
+</div>

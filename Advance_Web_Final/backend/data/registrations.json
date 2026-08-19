@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1783565768443",
+    "activityId": "1",
+    "username": "employee1",
+    "employeeName": "Employee One",
+    "status": "registered",
+    "registeredAt": "2026-07-09T02:56:08.443Z"
+  },
+  {
+    "id": "1783579201228",
+    "activityId": "2",
+    "username": "employee1",
+    "employeeName": "Employee One",
+    "status": "registered",
+    "registeredAt": "2026-07-09T06:40:01.230Z"
+  }
+]

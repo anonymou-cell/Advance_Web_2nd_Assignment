@@ -1,0 +1,28 @@
+[
+  {
+    "id": "1",
+    "title": "Community Cleanup",
+    "serviceType": "Environment",
+    "location": "City Park",
+    "description": "Cleaning the public park.",
+    "date": "2026-07-20",
+    "time": "09:00",
+    "maxSeats": 20,
+    "seatsTaken": 6,
+    "cutOffDateTime": "2026-07-18T18:00:00",
+    "checkInCode": "VGZVN7"
+  },
+  {
+    "id": "2",
+    "title": "Blood Donation Camp",
+    "serviceType": "Health",
+    "location": "Community Hall",
+    "description": "Donate blood to help patients.",
+    "date": "2026-07-24",
+    "time": "10:00",
+    "maxSeats": 15,
+    "seatsTaken": 9,
+    "cutOffDateTime": "2026-07-22T18:00:00",
+    "checkInCode": "NEMDFX"
+  }
+]
