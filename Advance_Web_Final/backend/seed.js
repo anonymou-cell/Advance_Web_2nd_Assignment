@@ -10,14 +10,14 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/servic
 // ── Seed Data ──
 
 const users = [
-  // Admins
-  { fullName: 'Roshan Tamang', email: 'roshan@company.com', password: 'admin123', role: 'admin' },
-  { fullName: 'Sabin Karki', email: 'sabin@company.com', password: 'admin123', role: 'admin' },
+  // Admin
+  { fullName: 'Admin', email: 'astrologerwrong@gmail.com', password: 'admin123', role: 'admin' },
 
   // Employees
   { fullName: 'Sahil Shrestha', email: 'sahil@gmail.com', password: 'Sahil123', role: 'employee' },
   { fullName: 'Suman Kumar', email: 'suman@gmail.com', password: 'Suman123', role: 'employee' },
-  { fullName: 'Alex Thompson', email: 'alex@company.com', password: 'Alex1234', role: 'employee' },
+  { fullName: 'Alex Thompson', email: 'alex@company.com', password: 'Alex123', role: 'employee' },
+  { fullName: 'Sahil Tuchhe', email: 'sahiltuchhe123@gmail.com', password: 'Sahil123', role: 'employee' },
   { fullName: 'Maria Garcia', email: 'maria@company.com', password: 'Maria123', role: 'employee' },
   { fullName: 'James Wilson', email: 'james@company.com', password: 'James123', role: 'employee' },
   { fullName: 'Emily Chen', email: 'emily@company.com', password: 'Emily123', role: 'employee' },
@@ -237,7 +237,7 @@ async function seed() {
 
     console.log('\n🎉 Database seeded successfully!');
     console.log('\n📋 Demo Accounts:');
-    console.log('   Admin:    roshan@company.com / admin123');
+    console.log('   Admin:    astrologerwrong@gmail.com / admin123');
     console.log('   Employee: sahil@gmail.com / Sahil123');
     console.log('   Employee: suman@gmail.com / Suman123');
 
