@@ -2,11 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-export interface Participant {
-  id: string;
-  activity: string;
-  employee: string;
-  status: string;
+import { ActivityService, Activity } from '../../../services/activity';
+import { RegistrationService, Registration } from '../../../services/registration';
+import { CheckinService, Checkin } from '../../../services/checkin';
+
+export interface ParticipantRow {
+  registration: Registration;
+  activityTitle: string;
+  checkedIn: boolean;
 }
 
 @Component({
@@ -18,12 +21,15 @@ export interface Participant {
 })
 export class Participation implements OnInit {
 
-  participants: Participant[] = [];
+  activities: Activity[] = [];
+  registrations: Registration[] = [];
+  checkins: Checkin[] = [];
+  participants: ParticipantRow[] = [];
 
   isLoading = true;
   errorMessage = '';
 
-  removingId: string |null = null;
+  removingId: string | null = null;
   remindingId: string | null = null;
 
   actionError = '';
@@ -31,66 +37,72 @@ export class Participation implements OnInit {
 
   activityFilter = 'all';
 
+  constructor(
+    private activityService: ActivityService,
+    private registrationService: RegistrationService,
+    private checkinService: CheckinService
+  ) {}
+
   ngOnInit(): void {
     this.loadParticipants();
   }
 
-  loadParticipants(): void {
-
+  async loadParticipants(): Promise<void> {
     this.isLoading = true;
     this.errorMessage = '';
 
-    setTimeout(() => {
+    try {
+      const [activities, registrations, checkins] = await Promise.all([
+        this.activityService.getActivities().toPromise(),
+        this.registrationService.getRegistrations().toPromise(),
+        this.checkinService.getCheckins().toPromise()
+      ]);
 
-      this.participants = [
-
-        {
-          id: '1',
-          activity: 'Community Cleanup',
-          employee: 'John Smith',
-          status: 'Registered'
-        },
-
-        {
-          id: '2',
-          activity: 'Blood Donation Camp',
-          employee: 'Emma Wilson',
-          status: 'Completed'
-        },
-
-        {
-          id: '3',
-          activity: 'Tree Plantation Drive',
-          employee: 'Michael Brown',
-          status: 'Registered'
-        }
-
-      ];
-
+      this.activities = activities || [];
+      this.registrations = registrations || [];
+      this.checkins = checkins || [];
+      this.buildParticipantRows();
+    } catch (err) {
+      this.errorMessage = 'Unable to load dashboard data.';
+    } finally {
       this.isLoading = false;
+    }
+  }
 
-    }, 500);
+  private buildParticipantRows(): void {
+    this.participants = this.registrations
+      .filter(r => r.status !== 'cancelled')
+      .map(reg => {
+        const regActId = String(reg.activityId);
+        const activity = this.activities.find(
+          a => String(a._id || a.id) === regActId
+        );
+        const isCheckedIn = this.checkins.some(
+          c => String(c.activityId) === regActId && String(c.username) === String(reg.username)
+        );
 
+        return {
+          registration: reg,
+          activityTitle: activity?.title || 'Unknown Activity',
+          checkedIn: isCheckedIn
+        };
+      });
   }
 
   get activityOptions(): string[] {
-
     return Array.from(
-      new Set(this.participants.map(p => p.activity))
+      new Set(this.participants.map(p => p.activityTitle))
     );
-
   }
 
-  get filteredParticipants(): Participant[] {
-
+  get filteredParticipants(): ParticipantRow[] {
     if (this.activityFilter === 'all') {
       return this.participants;
     }
 
     return this.participants.filter(
-      p => p.activity === this.activityFilter
+      p => p.activityTitle === this.activityFilter
     );
-
   }
 
   get totalSlotsTaken(): number {
@@ -98,55 +110,59 @@ export class Participation implements OnInit {
   }
 
   get distributionByActivity() {
-
     return this.activityOptions.map(activity => ({
-
       activity,
-
-      count: this.participants.filter(
-        p => p.activity === activity
-      ).length
-
+      count: this.participants.filter(p => p.activityTitle === activity).length
     }));
-
   }
 
-  removeParticipant(participant: Participant): void {
-
+  removeParticipant(participant: ParticipantRow): void {
     const confirmed = window.confirm(
-      `Remove ${participant.employee} from ${participant.activity}?`
+      `Remove ${participant.registration.employeeName} from ${participant.activityTitle}?`
     );
 
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
-    this.participants = this.participants.filter(
-      p => p.id !== participant.id
-    );
+    this.removingId = participant.registration._id || participant.registration.id;
 
-    this.actionSuccess =
-      `${participant.employee} has been removed.`;
-
+    this.registrationService.deleteRegistration(participant.registration._id || participant.registration.id).subscribe({
+      next: () => {
+        this.participants = this.participants.filter(
+          p => (p.registration._id || p.registration.id) !== (participant.registration._id || participant.registration.id)
+        );
+        this.actionSuccess = `${participant.registration.employeeName} has been removed.`;
+        this.actionError = '';
+        this.removingId = null;
+      },
+      error: (err) => {
+        this.actionError = err.message || 'Failed to remove participant.';
+        this.actionSuccess = '';
+        this.removingId = null;
+      }
+    });
   }
 
-  sendReminder(participant: Participant): void {
+  sendReminder(participant: ParticipantRow): void {
+    this.remindingId = participant.registration._id || participant.registration.id;
 
-    this.remindingId = participant.id;
-
-    setTimeout(() => {
-
-      this.actionSuccess =
-        `Reminder sent to ${participant.employee}.`;
-
-      this.remindingId = null;
-
-    }, 700);
-
+    this.registrationService.getRegistrations({
+      activityId: participant.registration.activityId,
+      username: participant.registration.username
+    }).subscribe({
+      next: (regs) => {
+        if (regs.length > 0) {
+          // In a real app, this would call a remind endpoint
+          this.actionSuccess = `Reminder sent to ${participant.registration.employeeName}.`;
+        }
+        this.remindingId = null;
+      },
+      error: () => {
+        this.remindingId = null;
+      }
+    });
   }
 
   statusClass(status: string): string {
     return status.toLowerCase();
   }
-
 }

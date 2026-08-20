@@ -78,5 +78,21 @@
     "password": "$2b$10$PDdjMGIApep/aT..DaXQousWyG9rKCgFmHUjGT1bbQFFTeH8mxAGi",
     "role": "admin",
     "createdAt": "2026-08-19T16:25:27.837Z"
+  },
+  {
+    "id": "d7ed50f0-cfa6-4528-97fa-ade2440ad608",
+    "fullName": "Sahil Shrestha",
+    "email": "sahiltuchhe123@gmail.com",
+    "password": "$2b$10$lITBG8XCn32J/uQEu7W4K.mglMRf9g7WqDLCuNoOw6hpdGd.bClVG",
+    "role": "employee",
+    "createdAt": "2026-08-20T16:14:26.144Z"
+  },
+  {
+    "id": "7de18c78-ffa5-4102-9ec6-6e8afe63e1c1",
+    "fullName": "Test Agent",
+    "email": "agent@test.com",
+    "password": "$2b$10$dx.cUQNMvd1fgSC2WBIBNuQ2IdDfWbC5wmMagsYDPbt9Dgke6AqES",
+    "role": "employee",
+    "createdAt": "2026-08-20T16:15:31.879Z"
   }
 ]

@@ -11,11 +11,11 @@
   </button>
 </div>
 
-<div class="action-error" *ngIf="actionError">
+<div class="action-error" *ngIf="actionError" (click)="actionError = ''">
   {{ actionError }}
 </div>
 
-<div class="action-success" *ngIf="actionSuccess">
+<div class="action-success" *ngIf="actionSuccess" (click)="actionSuccess = ''">
   {{ actionSuccess }}
 </div>
 
@@ -91,6 +91,7 @@
         <th>Employee</th>
         <th>Activity</th>
         <th>Status</th>
+        <th>Checked In</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -100,22 +101,26 @@
       <tr *ngFor="let participant of filteredParticipants">
 
         <td data-label="Employee">
-          {{ participant.employee }}
+          {{ participant.registration.employeeName }}
         </td>
 
         <td data-label="Activity">
-          {{ participant.activity }}
+          {{ participant.activityTitle }}
         </td>
 
         <td data-label="Status">
 
           <span
             class="status"
-            [class]="statusClass(participant.status)"
+            [class]="statusClass(participant.registration.status)"
           >
-            {{ participant.status }}
+            {{ participant.registration.status }}
           </span>
 
+        </td>
+
+        <td data-label="Checked In">
+          {{ participant.checkedIn ? '✓ Yes' : '— No' }}
         </td>
 
         <td
@@ -125,11 +130,11 @@
 
           <button
             class="reminder-btn"
-            [disabled]="remindingId === participant.id"
+            [disabled]="remindingId === participant.registration._id || participant.registration.id"
             (click)="sendReminder(participant)"
           >
             {{
-              remindingId === participant.id
+              remindingId === participant.registration._id || participant.registration.id
                 ? 'Sending...'
                 : 'Remind'
             }}
@@ -137,11 +142,11 @@
 
           <button
             class="remove-btn"
-            [disabled]="removingId === participant.id"
+            [disabled]="removingId === participant.registration._id || participant.registration.id"
             (click)="removeParticipant(participant)"
           >
             {{
-              removingId === participant.id
+              removingId === participant.registration._id || participant.registration.id
                 ? 'Removing...'
                 : 'Remove'
             }}

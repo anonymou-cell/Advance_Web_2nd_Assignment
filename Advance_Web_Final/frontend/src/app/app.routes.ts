@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 
+import { authGuard, adminGuard, employeeGuard } from './guards/auth.guard';
+
 import { Login } from './pages/login/login';
 
 import { MainLayout } from './layouts/main-layout/main-layout';
@@ -8,6 +10,7 @@ import { EmployeeDashboard } from './pages/employee/dashboard/employee-dashboard
 import { Activities } from './pages/employee/activities/activities';
 import { Registrations } from './pages/employee/registrations/registrations';
 import { EmployeeCheckin } from './pages/employee/checkin/checkin';
+import { EmployeeNotifications } from './pages/employee/notifications/employee-notifications';
 
 import { AdminDashboard } from './pages/admin/dashboard/admin-dashboard';
 import { Activities as AdminActivities } from './pages/admin/activities/activities';
@@ -25,6 +28,7 @@ export const routes: Routes = [
   {
     path: 'employee',
     component: MainLayout,
+    canActivate: [authGuard, employeeGuard],
     children: [
       {
         path: 'dashboard',
@@ -38,12 +42,14 @@ export const routes: Routes = [
         path: 'registrations',
         component: Registrations
       },
-
       {
         path: 'checkin',
         component: EmployeeCheckin
       },
-      
+      {
+        path: 'notifications',
+        component: EmployeeNotifications
+      },
       {
         path: '',
         redirectTo: 'dashboard',
@@ -55,6 +61,7 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: MainLayout,
+    canActivate: [authGuard, adminGuard],
     children: [
       {
         path: 'dashboard',
@@ -76,7 +83,6 @@ export const routes: Routes = [
         path: 'participation',
         component: Participation
       },
-
       {
         path: 'checkin-management',
         component: CheckinManagement

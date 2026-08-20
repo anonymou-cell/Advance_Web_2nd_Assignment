@@ -17,39 +17,46 @@
     class="toggle-btn"
     [class.active]="mode === 'scan'"
     (click)="setMode('scan')">
-    Scan QR Code
+    📷 Scan QR Code
   </button>
 
   <button
     class="toggle-btn"
     [class.active]="mode === 'manual'"
     (click)="setMode('manual')">
-    Enter Code Manually
+    ✏️ Enter Code Manually
   </button>
 </div>
 
+<!-- QR Scanner Panel -->
 <div class="panel" *ngIf="mode === 'scan'">
 
   <div class="error-banner" *ngIf="cameraError">
     {{ cameraError }}
+    <button class="retry-camera-btn" (click)="setMode('manual')">Switch to Manual Entry</button>
   </div>
 
-  <div class="scanner-frame" *ngIf="!cameraError">
-    <video #video playsinline muted></video>
-    <div class="scan-guide"></div>
-  </div>
+  <!-- html5-qrcode renders the camera feed here -->
+  <div id="qr-reader" class="qr-reader-container" *ngIf="!cameraError"></div>
 
-  <canvas #canvas class="hidden-canvas"></canvas>
-
-  <p class="scan-hint" *ngIf="!cameraError">
-    Point your camera at the QR code. Check-in happens automatically once it's recognized.
+  <p class="scan-hint" *ngIf="!cameraError && isScanning">
+    Point your camera at the QR code. Check-in happens automatically.
   </p>
 
-  <button class="restart-btn" *ngIf="!isScanning && !cameraError" (click)="startScanning()">
-    Restart camera
+  <p class="scan-hint" *ngIf="!cameraError && !isScanning && !cameraError">
+    Click "Start Camera" to begin scanning.
+  </p>
+
+  <button class="restart-btn" (click)="startScanning()" *ngIf="!isScanning && !cameraError">
+    Start Camera
+  </button>
+
+  <button class="stop-btn" (click)="stopScanning()" *ngIf="isScanning">
+    Stop Camera
   </button>
 </div>
 
+<!-- Manual Code Panel -->
 <div class="panel" *ngIf="mode === 'manual'">
   <label for="manualCode">Check-in code</label>
 
@@ -76,15 +83,36 @@
   </p>
 </div>
 
+<!-- Loading -->
+<div class="loading" *ngIf="isLoadingStatus">
+  <div class="spinner"></div>
+  <span>Loading your activities...</span>
+</div>
+
+<!-- Registered activities with check-in status -->
 <div class="status-section" *ngIf="!isLoadingStatus && myRegistrations.length > 0">
-  <h2>Your registered activities</h2>
+  <h2>Your Registered Activities</h2>
+  <p class="live-hint">🔄 Updates automatically every 3 seconds</p>
 
   <ul class="status-list">
-    <li *ngFor="let reg of myRegistrations">
-      <span class="activity-name">{{ activityTitle(reg.activityId) }}</span>
+    <li *ngFor="let reg of myRegistrations" [class.checked-in-item]="isCheckedIn(reg.activityId)">
+      <div class="activity-info">
+        <span class="activity-name">{{ activityTitle(reg.activityId) }}</span>
+        <span class="activity-date" *ngIf="registrationActivity(reg)">
+          {{ registrationActivity(reg)?.date }} {{ registrationActivity(reg)?.time }}
+        </span>
+        <span class="activity-location" *ngIf="registrationActivity(reg)">
+          📍 {{ registrationActivity(reg)?.location }}
+        </span>
+      </div>
       <span class="status-pill" [class.checked-in]="isCheckedIn(reg.activityId)">
-        {{ isCheckedIn(reg.activityId) ? 'Checked in' : 'Not checked in yet' }}
+        {{ isCheckedIn(reg.activityId) ? '✅ Checked in' : '⏳ Not checked in yet' }}
       </span>
     </li>
   </ul>
+</div>
+
+<div class="empty-state" *ngIf="!isLoadingStatus && myRegistrations.length === 0">
+  <p>You haven't registered for any activities yet.</p>
+  <a routerLink="/employee/activities" class="browse-link">Browse Activities →</a>
 </div>

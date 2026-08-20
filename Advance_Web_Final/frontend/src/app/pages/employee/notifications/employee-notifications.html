@@ -1,0 +1,47 @@
+<h1>Notifications</h1>
+
+<p class="subtitle">
+  Stay updated with Service Day announcements and reminders.
+</p>
+
+<div class="error-banner" *ngIf="errorMessage">
+  {{ errorMessage }}
+  <button class="retry-btn" (click)="loadData()">Retry</button>
+</div>
+
+<!-- Loading spinner -->
+<div class="loading" *ngIf="isLoading">
+  <div class="spinner"></div>
+  <span>Loading notifications...</span>
+</div>
+
+<!-- Empty state -->
+<div class="empty-state" *ngIf="!isLoading && !errorMessage && notifications.length === 0">
+  <div class="empty-icon">🔔</div>
+  <p>No notifications yet.</p>
+  <p class="empty-hint">You'll receive updates about activities, reminders, and announcements here.</p>
+</div>
+
+<!-- Notifications list -->
+<div class="notifications-list" *ngIf="!isLoading && !errorMessage && notifications.length > 0">
+
+  <div
+    class="notification-card"
+    *ngFor="let notif of notifications"
+    [class.broadcast]="notif.type === 'broadcast'"
+    [class.reminder]="notif.type === 'reminder'"
+  >
+    <div class="notif-header">
+      <span class="notif-icon">{{ typeIcon(notif.type) }}</span>
+      <span class="notif-type">{{ typeLabel(notif.type) }}</span>
+      <span class="notif-time">{{ formatTime(notif.sentAt || notif.createdAt || '') }}</span>
+    </div>
+
+    <p class="notif-message">{{ notif.message }}</p>
+
+    <div class="notif-activity" *ngIf="notif.activityId">
+      📋 Related activity: <strong>{{ activityName(notif.activityId) }}</strong>
+    </div>
+  </div>
+
+</div>

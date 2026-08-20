@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Verifies the Bearer token on the request and attaches the decoded
 // { id, email, role } payload to req.user. Blocks the request with 401

@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 
 export interface Notification {
+  _id: string;
   id: string;
   message: string;
   activityId?: string | null;
@@ -11,6 +12,7 @@ export interface Notification {
   targetUsername?: string;
   type: 'broadcast' | 'reminder';
   sentAt: string;
+  createdAt?: string;
 }
 
 @Injectable({
@@ -60,13 +62,19 @@ export class NotificationService {
   }
 
   private handleError(error: HttpErrorResponse) {
-    const message =
-      error.error instanceof ErrorEvent
-        ? `Client error: ${error.error.message}`
-        : `Server returned ${error.status}: ${error.error?.message || error.message}`;
+    let message: string;
+
+    if (error.status === 0) {
+      message = 'Cannot connect to server. Please check if the backend is running.';
+    } else if (error.error instanceof ErrorEvent) {
+      message = `Client error: ${error.error.message}`;
+    } else if (error.error?.message) {
+      message = error.error.message;
+    } else {
+      message = `Server error (${error.status}): ${error.statusText}`;
+    }
 
     console.error('NotificationService error:', message);
-
     return throwError(() => new Error(message));
   }
 }

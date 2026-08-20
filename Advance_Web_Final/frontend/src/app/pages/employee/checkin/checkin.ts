@@ -1,7 +1,8 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import jsQR from 'jsqr';
+import { Subject, interval, takeUntil, switchMap } from 'rxjs';
+import { Html5Qrcode } from 'html5-qrcode';
 
 import { AuthService } from '../../../services/auth';
 import { CheckinService, Checkin } from '../../../services/checkin';
@@ -19,11 +20,7 @@ type Mode = 'scan' | 'manual';
 })
 export class EmployeeCheckin implements OnInit, OnDestroy {
 
-  @ViewChild('video') videoRef?: ElementRef<HTMLVideoElement>;
-  @ViewChild('canvas') canvasRef?: ElementRef<HTMLCanvasElement>;
-
-  mode: Mode = 'scan';
-
+  mode: Mode = 'manual'; // Start in manual mode (camera unreliable on http://localhost)
   manualCode = '';
 
   isScanning = false;
@@ -36,10 +33,11 @@ export class EmployeeCheckin implements OnInit, OnDestroy {
   myRegistrations: Registration[] = [];
   myCheckins: Checkin[] = [];
   activities: Activity[] = [];
+  activityMap: Map<string, Activity> = new Map();
   isLoadingStatus = true;
 
-  private stream: MediaStream | null = null;
-  private frameHandle: number | null = null;
+  private html5QrCode: Html5Qrcode | null = null;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
@@ -50,52 +48,83 @@ export class EmployeeCheckin implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadStatus();
+    this.startRealTimePolling();
   }
 
   ngOnDestroy(): void {
     this.stopScanning();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private get currentUsername(): string {
-    return this.authService.getCurrentUser()?.email || 'employee1';
+    return this.authService.getCurrentUser()?.email || '';
   }
 
   private get currentEmployeeName(): string {
     return this.authService.getCurrentUser()?.fullName || this.currentUsername;
   }
 
-  loadStatus(): void {
+  // ── Load all data in parallel ──
+  async loadStatus(): Promise<void> {
     this.isLoadingStatus = true;
 
-    this.activityService.getActivities().subscribe({
-      next: (activities) => (this.activities = activities),
-      error: () => undefined
-    });
+    try {
+      const [activities, registrations, checkins] = await Promise.all([
+        this.activityService.getActivities().toPromise(),
+        this.registrationService.getRegistrations({
+          username: this.currentUsername,
+          status: 'registered'
+        }).toPromise(),
+        this.checkinService.getCheckins({
+          username: this.currentUsername
+        }).toPromise()
+      ]);
 
-    this.registrationService
-      .getRegistrations({ username: this.currentUsername, status: 'registered' })
+      this.activities = activities || [];
+      this.myRegistrations = registrations || [];
+      this.myCheckins = checkins || [];
+
+      this.activityMap.clear();
+      for (const a of this.activities) {
+        const key = String(a._id || a.id);
+        this.activityMap.set(key, a);
+      }
+    } catch (err) {
+      console.error('Failed to load status:', err);
+    } finally {
+      this.isLoadingStatus = false;
+    }
+  }
+
+  // ── Real-time polling: refresh check-ins every 3 seconds ──
+  private startRealTimePolling(): void {
+    interval(3000)
+      .pipe(
+        takeUntil(this.destroy$),
+        switchMap(() =>
+          this.checkinService.getCheckins({ username: this.currentUsername })
+        )
+      )
       .subscribe({
-        next: (regs) => {
-          this.myRegistrations = regs;
-
-          this.checkinService.getCheckins({ username: this.currentUsername }).subscribe({
-            next: (checkins) => {
-              this.myCheckins = checkins;
-              this.isLoadingStatus = false;
-            },
-            error: () => (this.isLoadingStatus = false)
-          });
+        next: (checkins) => {
+          this.myCheckins = checkins || [];
         },
-        error: () => (this.isLoadingStatus = false)
+        error: () => {}
       });
   }
 
-  isCheckedIn(activityId: string): boolean {
-    return this.myCheckins.some(c => c.activityId === activityId);
+  activityTitle(activityId: any): string {
+    return this.activityMap.get(String(activityId))?.title || 'Unknown Activity';
   }
 
-  activityTitle(activityId: string): string {
-    return this.activities.find(a => a.id === activityId)?.title || 'Activity';
+  isCheckedIn(activityId: any): boolean {
+    const key = String(activityId);
+    return this.myCheckins.some(c => String(c.activityId) === key);
+  }
+
+  registrationActivity(reg: Registration): Activity | undefined {
+    return this.activityMap.get(String(reg.activityId));
   }
 
   setMode(mode: Mode): void {
@@ -104,113 +133,128 @@ export class EmployeeCheckin implements OnInit, OnDestroy {
     this.resultSuccess = '';
 
     if (mode === 'scan') {
-      this.startScanning();
+      // Wait for Angular to render the #qr-reader div, then start camera
+      setTimeout(() => this.startScanning(), 150);
     } else {
       this.stopScanning();
     }
   }
 
+  private retryCount = 0;
+
   async startScanning(): Promise<void> {
     this.cameraError = '';
 
-    if (!navigator.mediaDevices?.getUserMedia) {
-      this.cameraError = 'Camera access is not supported on this device. Please enter the code manually.';
-      this.mode = 'manual';
-      return;
-    }
-
-    try {
-      this.stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }
-      });
-
-      const video = this.videoRef?.nativeElement;
-      if (!video) {
+    // Wait for Angular to render the #qr-reader div
+    const element = document.getElementById('qr-reader');
+    if (!element) {
+      if (this.retryCount < 5) {
+        this.retryCount++;
+        setTimeout(() => this.startScanning(), 200);
         return;
       }
+      this.cameraError = 'Scanner element not found. Please try manual entry.';
+      return;
+    }
+    this.retryCount = 0;
 
-      video.srcObject = this.stream;
-      await video.play();
+    try {
+      this.html5QrCode = new Html5Qrcode('qr-reader');
+
+      await this.html5QrCode.start(
+        { facingMode: 'environment' },
+        {
+          fps: 10,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0
+        },
+        (decodedText) => {
+          // QR code scanned successfully
+          this.stopScanning();
+          this.submitCode(decodedText.trim());
+        },
+        () => {
+          // QR scan error (ignorable — means no QR found in frame)
+        }
+      );
 
       this.isScanning = true;
-      this.scanFrame();
-    } catch (err) {
-      this.cameraError = 'Unable to access the camera. You can enter the code manually instead.';
-      this.mode = 'manual';
+    } catch (err: any) {
+      console.error('Camera error:', err);
+      this.cameraError = this.getCameraErrorMessage(err);
+      this.isScanning = false;
     }
   }
 
   stopScanning(): void {
     this.isScanning = false;
 
-    if (this.frameHandle !== null) {
-      cancelAnimationFrame(this.frameHandle);
-      this.frameHandle = null;
+    if (this.html5QrCode) {
+      try { this.html5QrCode.stop(); } catch {}
+      try { this.html5QrCode.clear(); } catch {}
+      this.html5QrCode = null;
     }
-
-    this.stream?.getTracks().forEach(track => track.stop());
-    this.stream = null;
   }
 
-  private scanFrame(): void {
-    if (!this.isScanning) {
-      return;
+  private getCameraErrorMessage(err: any): string {
+    const msg = err?.message || String(err);
+
+    if (msg.includes('NotAllowedError') || msg.includes('Permission')) {
+      return 'Camera permission denied. Please allow camera access in your browser settings, or enter the code manually.';
     }
-
-    const video = this.videoRef?.nativeElement;
-    const canvas = this.canvasRef?.nativeElement;
-
-    if (video && canvas && video.readyState === video.HAVE_ENOUGH_DATA) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const result = jsQR(imageData.data, imageData.width, imageData.height);
-
-        if (result?.data) {
-          this.stopScanning();
-          this.submitCode(result.data.trim());
-          return;
-        }
-      }
+    if (msg.includes('NotFoundError') || msg.includes('DevicesNotFound')) {
+      return 'No camera found. Enter the code manually.';
     }
-
-    this.frameHandle = requestAnimationFrame(() => this.scanFrame());
+    if (msg.includes('NotReadableError') || msg.includes('TrackStartError')) {
+      return 'Camera is in use by another app. Close other camera apps and try again.';
+    }
+    if (msg.includes('OverconstrainedError')) {
+      return 'Camera does not support the required settings. Try manual entry.';
+    }
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+      return 'Camera requires HTTPS. Enter the code manually.';
+    }
+    return 'Camera failed to start. Enter the code manually.';
   }
 
   submitManualCode(): void {
     const code = this.manualCode.trim();
-    if (!code) {
-      return;
-    }
+    if (!code) return;
     this.submitCode(code);
   }
 
-  private submitCode(code: string): void {
+  private async submitCode(rawCode: string): Promise<void> {
     this.isSubmitting = true;
     this.resultError = '';
     this.resultSuccess = '';
 
-    this.checkinService
-      .checkIn({
-        code,
+    // Parse QR code — it may be JSON {activityId, checkInCode} or just a plain code
+    let code = rawCode;
+    try {
+      const parsed = JSON.parse(rawCode);
+      if (parsed.checkInCode) {
+        code = parsed.checkInCode;
+      } else if (parsed.code) {
+        code = parsed.code;
+      }
+    } catch {
+      // Not JSON — use as plain text code
+    }
+
+    try {
+      const checkin = await this.checkinService.checkIn({
+        code: code.trim().toUpperCase(),
         username: this.currentUsername,
         employeeName: this.currentEmployeeName
-      })
-      .subscribe({
-        next: (checkin) => {
-          this.resultSuccess = `You're checked in to "${checkin.activityTitle}".`;
-          this.manualCode = '';
-          this.isSubmitting = false;
-          this.loadStatus();
-        },
-        error: (err) => {
-          this.resultError = err.message || 'Check-in failed. Please try again.';
-          this.isSubmitting = false;
-        }
-      });
+      }).toPromise();
+
+      this.resultSuccess = `Checked in to "${checkin?.activityTitle || 'Activity'}" successfully!`;
+      this.manualCode = '';
+      await this.loadStatus();
+    } catch (err: any) {
+      this.resultError = err.message || 'Check-in failed. Please try again.';
+    } finally {
+      this.isSubmitting = false;
+    }
   }
 }

@@ -30,7 +30,7 @@
     <option value="" disabled>
       {{ isLoadingActivities ? 'Loading activities...' : 'Select an activity' }}
     </option>
-    <option *ngFor="let activity of activities" [value]="activity.id">
+    <option *ngFor="let activity of activities" [value]="activity._id || activity.id">
       {{ activity.title }} &mdash; {{ activity.date }}
     </option>
   </select>
@@ -58,6 +58,7 @@
     <div class="code-row">
       <span class="code">{{ selectedActivity.checkInCode }}</span>
       <button class="copy-btn" (click)="copyCode()">Copy code</button>
+      <button class="download-btn" (click)="downloadQr()" *ngIf="qrDataUrl">Download QR</button>
     </div>
 
     <div class="qr-stats">
@@ -120,9 +121,9 @@
               <button
                 class="remove-btn"
                 *ngIf="row.checkin"
-                [disabled]="removingId === row.checkin.id"
+                [disabled]="removingId === row.checkin._id || row.checkin.id"
                 (click)="undoCheckin(row.checkin)">
-                {{ removingId === row.checkin.id ? 'Removing...' : 'Undo' }}
+                {{ removingId === row.checkin._id || row.checkin.id ? 'Removing...' : 'Undo' }}
               </button>
             </td>
           </tr>

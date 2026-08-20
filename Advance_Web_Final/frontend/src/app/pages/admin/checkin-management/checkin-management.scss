@@ -170,6 +170,20 @@ h1 {
   background: #1d4ed8;
 }
 
+.download-btn {
+  background: #059669;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: .5rem 1rem;
+  cursor: pointer;
+  font-size: .85rem;
+}
+
+.download-btn:hover {
+  background: #047857;
+}
+
 .qr-stats {
   display: flex;
   justify-content: center;

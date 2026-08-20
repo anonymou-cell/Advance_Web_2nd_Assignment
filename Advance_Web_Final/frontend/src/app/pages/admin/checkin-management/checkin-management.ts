@@ -82,7 +82,7 @@ export class CheckinManagement implements OnInit, OnDestroy {
   }
 
   get selectedActivity(): Activity | undefined {
-    return this.activities.find(a => a.id === this.selectedActivityId);
+    return this.activities.find(a => (a._id || a.id) === this.selectedActivityId);
   }
 
   onActivityChange(): void {
@@ -229,13 +229,13 @@ export class CheckinManagement implements OnInit, OnDestroy {
       return;
     }
 
-    this.removingId = checkin.id;
+    this.removingId = checkin._id || checkin.id;
     this.actionError = '';
 
-    this.checkinService.removeCheckin(checkin.id).subscribe({
+    this.checkinService.removeCheckin(checkin._id || checkin.id).subscribe({
       next: () => {
         this.checkins = this.checkins.filter(
-          c => c.id !== checkin.id
+          c => (c._id || c.id) !== (checkin._id || checkin.id)
         );
         this.removingId = null;
       },
@@ -259,5 +259,20 @@ export class CheckinManagement implements OnInit, OnDestroy {
       },
       () => undefined
     );
+  }
+
+  downloadQr(): void {
+    if (!this.qrDataUrl || !this.selectedActivity) {
+      return;
+    }
+
+    const link = document.createElement('a');
+    link.href = this.qrDataUrl;
+    link.download = `QR-${this.selectedActivity.title.replace(/\s+/g, '-')}-${this.selectedActivity.checkInCode}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    this.actionSuccess = 'QR code downloaded.';
   }
 }

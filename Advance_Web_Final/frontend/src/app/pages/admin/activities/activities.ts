@@ -17,6 +17,7 @@ export class Activities implements OnInit {
   isLoading = false;
   errorMessage = '';
   actionError = '';
+  actionSuccess = '';
 
   deletingId: string | null = null;
 
@@ -27,7 +28,6 @@ export class Activities implements OnInit {
   }
 
   loadActivities(): void {
-
     this.isLoading = true;
     this.errorMessage = '';
 
@@ -42,7 +42,6 @@ export class Activities implements OnInit {
         this.isLoading = false;
       }
     });
-
   }
 
   availableSeats(activity: Activity): number {
@@ -58,7 +57,6 @@ export class Activities implements OnInit {
   }
 
   deleteActivity(activity: Activity): void {
-
     const confirmed = confirm(
       `Are you sure you want to delete "${activity.title}"?`
     );
@@ -67,16 +65,17 @@ export class Activities implements OnInit {
       return;
     }
 
-    this.deletingId = activity.id;
+    this.deletingId = activity._id || activity.id;
     this.actionError = '';
+    this.actionSuccess = '';
 
-    this.activityService.deleteActivity(activity.id).subscribe({
+    this.activityService.deleteActivity(activity._id || activity.id).subscribe({
       next: () => {
         this.activities = this.activities.filter(
-          a => a.id !== activity.id
+          a => (a._id || a.id) !== (activity._id || activity.id)
         );
         this.deletingId = null;
-        alert('Activity deleted successfully.');
+        this.actionSuccess = `"${activity.title}" deleted successfully.`;
       },
       error: (err) => {
         console.error(err);
@@ -84,7 +83,10 @@ export class Activities implements OnInit {
         this.deletingId = null;
       }
     });
-
   }
 
+  dismissMessages(): void {
+    this.actionError = '';
+    this.actionSuccess = '';
+  }
 }

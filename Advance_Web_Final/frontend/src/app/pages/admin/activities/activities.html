@@ -13,9 +13,19 @@
   </button>
 </div>
 
+<!-- Success feedback -->
+<div
+  class="action-success"
+  *ngIf="actionSuccess"
+  (click)="dismissMessages()">
+  {{ actionSuccess }}
+</div>
+
+<!-- Error feedback -->
 <div
   class="action-error"
-  *ngIf="actionError">
+  *ngIf="actionError"
+  (click)="dismissMessages()">
   {{ actionError }}
 </div>
 
@@ -74,7 +84,7 @@
 
     <h2>{{ activity.title }}</h2>
 
-    <p>
+    <p *ngIf="activity.serviceType">
       <strong>Type:</strong>
       {{ activity.serviceType }}
     </p>
@@ -99,21 +109,26 @@
       {{ activity.cutOffDateTime | date:'short' }}
     </p>
 
+    <p *ngIf="activity.checkInCode">
+      <strong>Check-in Code:</strong>
+      {{ activity.checkInCode }}
+    </p>
+
     <div class="card-actions">
 
      <button
   class="edit-btn"
-  [routerLink]="['/admin/activities', activity.id, 'edit']">
+  [routerLink]="['/admin/activities', activity._id || activity.id, 'edit']">
   Edit
 </button>
 
       <button
         class="delete-btn"
-        [disabled]="deletingId === activity.id"
+        [disabled]="deletingId === (activity._id || activity.id)"
         (click)="deleteActivity(activity)">
 
         {{
-          deletingId === activity.id
+          deletingId === (activity._id || activity.id)
             ? 'Deleting...'
             : 'Delete'
         }}

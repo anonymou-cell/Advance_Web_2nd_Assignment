@@ -4,6 +4,15 @@
   Register for upcoming community service activities.
 </p>
 
+<!-- Feedback messages -->
+<div class="feedback success" *ngIf="actionSuccess" (click)="actionSuccess = ''">
+  {{ actionSuccess }}
+</div>
+
+<div class="feedback error" *ngIf="actionError" (click)="actionError = ''">
+  {{ actionError }}
+</div>
+
 <div class="activity-grid">
 
   <!-- Loading cards -->
@@ -21,7 +30,8 @@
     <div
       class="activity-card"
       *ngFor="let activity of activities"
-      [class.full]="availableSeats(activity) <= 0">
+      [class.full]="isFull(activity)"
+      [class.closed]="isClosed(activity)">
 
       <span
         class="badge registered-badge"
@@ -31,11 +41,22 @@
 
       <span
         class="badge full-badge"
-        *ngIf="availableSeats(activity) <= 0">
+        *ngIf="isFull(activity)">
         Full
       </span>
 
+      <span
+        class="badge closed-badge"
+        *ngIf="isClosed(activity) && !isFull(activity)">
+        Closed
+      </span>
+
       <h2>{{ activity.title }}</h2>
+
+      <p *ngIf="activity.serviceType">
+        <strong>Type:</strong>
+        {{ activity.serviceType }}
+      </p>
 
       <p>
         <strong>Location:</strong>
@@ -45,6 +66,7 @@
       <p>
         <strong>Date:</strong>
         {{ activity.date }}
+        <span *ngIf="activity.time"> at {{ activity.time }}</span>
       </p>
 
       <p>
@@ -52,11 +74,16 @@
         {{ availableSeats(activity) }} / {{ activity.maxSeats }}
       </p>
 
+      <p class="cutoff" *ngIf="!isClosed(activity)">
+        <strong>Registration closes:</strong>
+        {{ activity.cutOffDateTime | date:'medium' }}
+      </p>
+
       <button
-        [disabled]="availableSeats(activity) <= 0 || isRegistered(activity)"
+        [disabled]="isFull(activity) || isRegistered(activity) || isClosed(activity)"
         (click)="register(activity)">
 
-        {{ isRegistered(activity) ? 'Registered' : 'Register' }}
+        {{ isRegistered(activity) ? '✓ Registered' : (isFull(activity) ? 'Full' : (isClosed(activity) ? 'Closed' : 'Register')) }}
 
       </button>
 

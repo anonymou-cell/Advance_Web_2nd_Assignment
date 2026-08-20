@@ -99,6 +99,51 @@ h1 {
   display: none;
 }
 
+/* ── html5-qrcode container ── */
+.qr-reader-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Override html5-qrcode default styles */
+.qr-reader-container ::ng-deep #qr-shaded-region {
+  border-radius: 12px;
+}
+
+.retry-camera-btn {
+  margin-top: 0.75rem;
+  background: #9a3412;
+  color: white;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+
+  &:hover {
+    background: #7c2d12;
+  }
+}
+
+.stop-btn {
+  display: block;
+  margin: 1rem auto 0;
+  background: #dc2626;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: .6rem 1.2rem;
+  cursor: pointer;
+  font-size: .85rem;
+
+  &:hover {
+    background: #b91c1c;
+  }
+}
+
 .scan-hint {
   color: #666;
   font-size: .85rem;
@@ -211,4 +256,68 @@ h1 {
 .status-pill.checked-in {
   background: #ecfdf5;
   color: #047857;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .8rem;
+  padding: 2rem;
+  color: #666;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.live-hint {
+  font-size: .8rem;
+  color: #999;
+  margin-bottom: 1rem;
+}
+
+.checked-in-item {
+  border-left: 3px solid #059669;
+}
+
+.activity-info {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+
+.activity-date {
+  font-size: .8rem;
+  color: #666;
+}
+
+.activity-location {
+  font-size: .8rem;
+  color: #888;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+}
+
+.browse-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.browse-link:hover {
+  text-decoration: underline;
 }

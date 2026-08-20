@@ -1,72 +1,101 @@
-<h1>Administrator Dashboard</h1>
+<h1>Admin Dashboard</h1>
 
-<p class="subtitle">
-  Manage Service Day activities and monitor employee participation.
-</p>
+<p class="subtitle">Overview of Service Day activities and participation.</p>
 
-<div class="stats">
+<div class="error-banner" *ngIf="errorMessage">
+  {{ errorMessage }}
+  <button class="retry-btn" (click)="loadDashboardData()">Retry</button>
+</div>
 
-  <div class="card">
-    <h3>Total Activities</h3>
-    <h2>{{ totalActivities }}</h2>
+<!-- Stats Cards -->
+<div class="stats-grid" *ngIf="!isLoading">
+  <div class="stat-card">
+    <div class="stat-icon activities">📋</div>
+    <div class="stat-info">
+      <span class="stat-value">{{ totalActivities }}</span>
+      <span class="stat-label">Activities</span>
+    </div>
   </div>
 
-  <div class="card">
-    <h3>Total Employees</h3>
-    <h2>{{ totalEmployees }}</h2>
+  <div class="stat-card">
+    <div class="stat-icon employees">👥</div>
+    <div class="stat-info">
+      <span class="stat-value">{{ totalEmployees }}</span>
+      <span class="stat-label">Employees</span>
+    </div>
   </div>
 
-  <div class="card">
-    <h3>Total Registrations</h3>
-    <h2>{{ totalRegistrations }}</h2>
+  <div class="stat-card">
+    <div class="stat-icon registrations">📝</div>
+    <div class="stat-info">
+      <span class="stat-value">{{ totalRegistrations }}</span>
+      <span class="stat-label">Registrations</span>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon checkins">✅</div>
+    <div class="stat-info">
+      <span class="stat-value">{{ totalCheckins }}</span>
+      <span class="stat-label">Check-ins</span>
+    </div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="charts-grid" *ngIf="!isLoading">
+
+  <!-- Bar Chart -->
+  <div class="chart-card">
+    <h3>Registrations per Activity</h3>
+    <div class="chart-container">
+      <canvas baseChart
+        [type]="barChartType"
+        [data]="barChartData"
+        [options]="barChartOptions">
+      </canvas>
+    </div>
+  </div>
+
+  <!-- Doughnut Chart -->
+  <div class="chart-card">
+    <h3>Seat Utilization</h3>
+    <div class="chart-container doughnut">
+      <canvas baseChart
+        [type]="doughnutChartType"
+        [data]="doughnutChartData"
+        [options]="doughnutChartOptions">
+      </canvas>
+    </div>
+  </div>
+
+  <!-- Line Chart -->
+  <div class="chart-card full-width">
+    <h3>Check-in Trend</h3>
+    <div class="chart-container">
+      <canvas baseChart
+        [type]="lineChartType"
+        [data]="lineChartData"
+        [options]="lineChartOptions">
+      </canvas>
+    </div>
   </div>
 
 </div>
 
-<section class="dashboard-section">
+<!-- Recent Activity -->
+<div class="recent-section" *ngIf="!isLoading && recentActivityLogs.length > 0">
+  <h3>Recent Activity</h3>
+  <ul class="recent-list">
+    <li *ngFor="let log of recentActivityLogs">
+      <span class="log-title">{{ log.title }}</span>
+      <span class="log-time">{{ log.time }}</span>
+    </li>
+  </ul>
+</div>
 
-  <div class="panel">
-
-    <h2>Recent Activity Management</h2>
-
-    <ul>
-
-      <li *ngFor="let activity of recentActivityLogs">
-
-        <span class="item-name">
-          {{ activity.title }}
-        </span>
-
-        <span class="item-date">
-          {{ activity.time }}
-        </span>
-
-      </li>
-
-    </ul>
-
-  </div>
-
-  <div class="panel">
-
-    <h2>Participation Summary</h2>
-
-    <ul>
-
-      <li *ngFor="let item of participationSummary">
-
-        <span class="item-name">
-          {{ item.activity }}
-        </span>
-
-        <span class="item-date">
-          {{ item.participants }} Participants
-        </span>
-
-      </li>
-
-    </ul>
-
-  </div>
-
-</section>
+<!-- Loading -->
+<div class="loading" *ngIf="isLoading">
+  <div class="spinner"></div>
+  <span>Loading dashboard...</span>
+</div>

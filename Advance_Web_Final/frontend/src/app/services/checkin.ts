@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 export interface Checkin {
+  _id: string;
   id: string;
   activityId: string;
   activityTitle: string;
@@ -62,13 +63,19 @@ export class CheckinService {
   }
 
   private handleError(error: HttpErrorResponse) {
-    const message =
-      error.error instanceof ErrorEvent
-        ? `Client error: ${error.error.message}`
-        : (error.error?.message || `Server returned ${error.status}: ${error.message}`);
+    let message: string;
+
+    if (error.status === 0) {
+      message = 'Cannot connect to server. Please check if the backend is running.';
+    } else if (error.error instanceof ErrorEvent) {
+      message = `Client error: ${error.error.message}`;
+    } else if (error.error?.message) {
+      message = error.error.message;
+    } else {
+      message = `Server error (${error.status}): ${error.statusText}`;
+    }
 
     console.error('CheckinService error:', message);
-
     return throwError(() => new Error(message));
   }
 }

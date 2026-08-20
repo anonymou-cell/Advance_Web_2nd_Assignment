@@ -19,7 +19,7 @@
       <label for="broadcastActivity">Target</label>
       <select id="broadcastActivity" [(ngModel)]="broadcastActivityId">
         <option value="all">All Employees</option>
-        <option *ngFor="let activity of activities" [value]="activity.id">
+        <option *ngFor="let activity of activities" [value]="activity._id || activity.id">
           {{ activity.title }} registrants
         </option>
       </select>
@@ -51,7 +51,7 @@
       <label for="reminderActivity">Activity</label>
       <select id="reminderActivity" [(ngModel)]="reminderActivityId">
         <option value="" disabled>Select an activity</option>
-        <option *ngFor="let activity of activities" [value]="activity.id">
+        <option *ngFor="let activity of activities" [value]="activity._id || activity.id">
           {{ activity.title }}
         </option>
       </select>

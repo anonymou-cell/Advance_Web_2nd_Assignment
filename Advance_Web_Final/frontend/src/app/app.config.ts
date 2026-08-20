@@ -23,6 +23,10 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 import { authInterceptor } from './interceptors/auth-interceptor';
 
+// ── Register Chart.js ──
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),

@@ -4,16 +4,31 @@
   View and manage your registered Service Day activities.
 </p>
 
+<!-- Feedback messages -->
+<div class="feedback success" *ngIf="actionSuccess" (click)="actionSuccess = ''">
+  {{ actionSuccess }}
+</div>
+
+<div class="feedback error" *ngIf="actionError" (click)="actionError = ''">
+  {{ actionError }}
+</div>
+
 <p class="empty-state" *ngIf="!isLoading && registrations.length === 0">
+
   You haven't registered for any activities yet.
+
 </p>
 
 <p class="empty-state" *ngIf="isLoading">
+
   Loading registrations...
+
 </p>
 
-<p class="empty-state" *ngIf="errorMessage">
+<p class="empty-state error" *ngIf="errorMessage">
+
   {{ errorMessage }}
+
 </p>
 
 <div class="table-wrap" *ngIf="!isLoading && registrations.length > 0">
@@ -22,7 +37,8 @@
 
     <thead>
       <tr>
-        <th>Activity ID</th>
+        <th>Activity</th>
+        <th>Date</th>
         <th>Employee</th>
         <th>Registered At</th>
         <th>Status</th>
@@ -34,13 +50,23 @@
 
       <tr *ngFor="let registration of registrations">
 
-        <td>{{ registration.activityId }}</td>
+        <td data-label="Activity">
+          {{ activityTitle(registration.activityId) }}
+        </td>
 
-        <td>{{ registration.employeeName }}</td>
+        <td data-label="Date">
+          {{ activityDate(registration.activityId) }}
+        </td>
 
-        <td>{{ registration.registeredAt | date:'medium' }}</td>
+        <td data-label="Employee">
+          {{ registration.employeeName }}
+        </td>
 
-        <td>
+        <td data-label="Registered At">
+          {{ registration.registeredAt | date:'medium' }}
+        </td>
+
+        <td data-label="Status">
           <span
             class="status"
             [class]="statusClass(registration.status)">
@@ -48,7 +74,7 @@
           </span>
         </td>
 
-        <td>
+        <td data-label="Action">
 
           <button
             class="cancel-btn"
